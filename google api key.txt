@@ -1,2 +1,0 @@
-maps sdk for android api key 
-	AIzaSyAigLGWsZyUuV4uwC9usuSqql4o-eM77l4

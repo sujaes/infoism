@@ -43,7 +43,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         String tempa  = getXmlData();
         Toast.makeText(getApplicationContext(), tempa, Toast.LENGTH_LONG).show();
 
-        
+
     }
     public String getXmlData() {
         StringBuffer buffer = new StringBuffer();

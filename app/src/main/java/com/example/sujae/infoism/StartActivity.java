@@ -1,42 +1,43 @@
 package com.example.sujae.infoism;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrimeInfo extends Activity {
-    List<String> NM = new ArrayList<String>();
-    List<Double> XCODE = new ArrayList<Double>();
-    List<Double> YCODE = new ArrayList<Double>();
+public class StartActivity extends Activity {
+    ArrayList<String> NM = new ArrayList<String>();
+    ArrayList<Double> XCODE = new ArrayList<Double>();
+    ArrayList<Double> YCODE = new ArrayList<Double>();
 
-    EditText edit;
-
-    static TextView text;
-    TextView text2;
+    Button button;
+    TextView textView;
     String key="616d44704b776b6439366e78424248";
     String data;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_crimeinfo);
-            edit= (EditText)findViewById(R.id.edit);
-            text= (TextView)findViewById(R.id.text);
-            text2= (TextView)findViewById(R.id.text2);
+            setContentView(R.layout.activity_start);
+            button =(Button) findViewById(R.id.button);
+            textView = (TextView) findViewById(R.id.textView);
         }
-        // 버튼 하나를 통해 2개의 쓰레드를 돌려서 각각의 api의 데이터를 가져와 출력
+
         public void mOnClick(View v){
             switch( v.getId() ){
                 case R.id.button:
@@ -49,7 +50,12 @@ public class CrimeInfo extends Activity {
                                 @Override
                                 public void run() {
                                     // TODO Auto-generated method stub
-                                    text.setText(data);
+                                    textView.setText(data);
+                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                    intent.putExtra("NM",NM);
+                                    intent.putExtra("XCODE",  XCODE);
+                                    intent.putExtra("YCODE",YCODE);
+                                    startActivity(intent);
                                 }
                             });
                         }
@@ -59,6 +65,7 @@ public class CrimeInfo extends Activity {
         }
         String getXmlData() {
             StringBuffer buffer = new StringBuffer();
+            String temp;
 
             String queryUrl = "http://openapi.seoul.go.kr:8088/" + key + "/xml/foodTruckInfo/1/50/";
             try {
@@ -83,19 +90,32 @@ public class CrimeInfo extends Activity {
                             else if (tag.equals("NM")) {
                                 buffer.append("사업장명 : ");
                                 xpp.next();
-                                buffer.append(xpp.getText());
-                                // MSRSTENAME 요소의 TEXT 읽어와서 문자열버퍼에 추가
-                                buffer.append("\n"); // 줄바꿈 문자 추가
+                                temp = xpp.getText();
+
+                                buffer.append(temp);
+                                buffer.append("\n");
+
+                                NM.add(temp);
+
                             } else if (tag.equals("XCODE")) {
                                 buffer.append("X좌표 : ");
                                 xpp.next();
-                                buffer.append(xpp.getText());
+                                temp = xpp.getText();
+
+                                buffer.append(temp);
                                 buffer.append("\n");
+
+                                XCODE.add(Double.parseDouble(temp));
                             } else if (tag.equals("YCODE")) {
                                 buffer.append("Y좌표 :");
                                 xpp.next();
-                                buffer.append(xpp.getText());//cpId
+                                temp = xpp.getText();
+
+                                buffer.append(temp);
                                 buffer.append("\n");
+
+                                YCODE.add(Double.parseDouble(temp));
+
                             }
                             break;
                         case XmlPullParser.TEXT:

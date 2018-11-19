@@ -14,13 +14,6 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:weightSum="10">
-
-        <EditText
-            android:id="@+id/edit"
-            android:layout_width="250dp"
-            android:layout_height="match_parent"
-            android:hint="enter text to search"/>
-
         <Button
             android:id="@+id/button"
             android:layout_width="100dp"
@@ -28,25 +21,11 @@
             android:text="search"
             android:textSize="12sp"
             android:onClick="mOnClick"/>
-
     </LinearLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="13sp"
-            android:textStyle="bold"/>
-
-    </ScrollView>
-
     <TextView
-        android:id="@+id/text2"
+        android:id="@+id/textView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
+        android:layout_height="wrap_content"
+        android:text="TextView" />
 </LinearLayout>

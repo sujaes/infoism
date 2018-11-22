@@ -20,6 +20,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<String> NM;
     ArrayList<Double> XCODE;
     ArrayList<Double> YCODE;
+    ArrayList<String> COT_CONTS_NAME;
+    ArrayList<Double> COT_COORD_X;
+    ArrayList<Double> COT_COORD_Y;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -30,6 +33,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         NM = (ArrayList<String>) getIntent().getSerializableExtra("NM");
         XCODE = (ArrayList<Double>) getIntent().getSerializableExtra("XCODE");
         YCODE = (ArrayList<Double>) getIntent().getSerializableExtra("YCODE");
+        COT_CONTS_NAME = (ArrayList<String>) getIntent().getSerializableExtra("COT_CONTS_NAME");
+        COT_COORD_X = (ArrayList<Double>) getIntent().getSerializableExtra("COT_COORD_X");
+        COT_COORD_Y = (ArrayList<Double>) getIntent().getSerializableExtra("COT_COORD_Y");
+
 
     }
     //맵에 알맞게 마커를 설정하고 마커 클릭시 알맞은 intent로 넘어감
@@ -51,6 +58,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     return false;
                 }
             });
+        }
+        for(int j = 0 ; j<COT_CONTS_NAME.size();j++){
+            MarkerOptions markerOptions1 = new MarkerOptions();
+            markerOptions1.position(new LatLng(COT_COORD_Y.get(j),COT_COORD_X.get(j))).title(COT_CONTS_NAME.get(j));
+            Toast.makeText(getApplicationContext(), COT_CONTS_NAME.get(j), Toast.LENGTH_SHORT).show();
+            map.addMarker(markerOptions1);
         }
         map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(36.3333,127.7333)));
         map.animateCamera(CameraUpdateFactory.zoomTo(10));

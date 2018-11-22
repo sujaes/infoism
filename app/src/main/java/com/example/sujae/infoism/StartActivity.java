@@ -2,32 +2,38 @@ package com.example.sujae.infoism;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
-
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
-
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class StartActivity extends Activity {
     ArrayList<String> NM = new ArrayList<String>();
     ArrayList<String> COT_CONTS_NAME = new ArrayList<String>();
+    ArrayList<String> RestaurantNM = new ArrayList<String>();
     ArrayList<Double> XCODE = new ArrayList<Double>();
     ArrayList<Double> YCODE = new ArrayList<Double>();
     ArrayList<Double> COT_COORD_X = new ArrayList<Double>();
     ArrayList<Double> COT_COORD_Y = new ArrayList<Double>();
-
+    ArrayList<Double> RestaurantXCODE = new ArrayList<Double>();
+    ArrayList<Double> RestaurantYCODE = new ArrayList<Double>();
 
     Button button;
     TextView textView;
@@ -51,6 +57,7 @@ public class StartActivity extends Activity {
                             //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
                             data= getFoodXmlData();
                             getRoadXmlData();
+                            getRoadRestaurantData();
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -63,6 +70,9 @@ public class StartActivity extends Activity {
                                     intent.putExtra("COT_CONTS_NAME",COT_CONTS_NAME);
                                     intent.putExtra("COT_COORD_X",COT_COORD_X);
                                     intent.putExtra("COT_COORD_Y",COT_COORD_Y);
+                                    intent.putExtra("RestaurantNM",RestaurantNM);
+                                    intent.putExtra("RestaurantXCODE",RestaurantXCODE);
+                                    intent.putExtra("RestaurantYCODE",RestaurantYCODE);
                                     startActivity(intent);
                                 }
                             });
@@ -71,6 +81,7 @@ public class StartActivity extends Activity {
                     break;
             }
         }
+        //서울시 푸드트럭 위치 불러오는 함수
         String getFoodXmlData() {
             StringBuffer buffer = new StringBuffer();
             String temp;
@@ -140,8 +151,8 @@ public class StartActivity extends Activity {
             buffer.append("파싱 끝\n");
             return buffer.toString();//StringBuffer 문자열 객체 반환
         }
-
-        public void getRoadXmlData(){
+        //서울시 30선 골목길 불러오는 함수
+        public void getRoadXmlData() {
             String temp;
             String queryUrl = "http://openapi.seoul.go.kr:8088/" + key + "/xml/MgisAllyWay/1/50/";
             try {
@@ -160,9 +171,8 @@ public class StartActivity extends Activity {
                             break;
                         case XmlPullParser.START_TAG:
                             tag = xpp.getName(); // 태그 이름 얻어오기
-                            if (tag.equals("MgisAllyWay")){
-                            }
-                            else if (tag.equals("COT_COORD_X")) {
+                            if (tag.equals("MgisAllyWay")) {
+                            } else if (tag.equals("COT_COORD_X")) {
                                 xpp.next();
                                 temp = xpp.getText();
 //                                if(COT_COORD_X.contains(Double.parseDouble(temp))){
@@ -177,13 +187,13 @@ public class StartActivity extends Activity {
 //                                }
                                 COT_COORD_Y.add(Double.parseDouble(temp));
                             }
-                            if(tag.equals("COT_CONTS_LAN_TYPE")){
-                                xpp.next();
-                                temp = xpp.getText();
+//                            if (tag.equals("COT_CONTS_LAN_TYPE")) {
+//                                xpp.next();
+//                                temp = xpp.getText();
 //                                if(temp.equals("ENG")){
 //                                    break;
 //                                }
-                            }
+//                            }
                             else if (tag.equals("COT_CONTS_NAME")) {
                                 xpp.next();
                                 temp = xpp.getText();
@@ -203,5 +213,41 @@ public class StartActivity extends Activity {
                 // TODO Auto-generated catch blocke.printStackTrace();
             }
         }
-
+        //백종원의 골목식당 데이터 불러오는 함수
+        public void getRoadRestaurantData(){
+                BufferedReader in;
+                Resources myResources = getResources();
+                InputStream myFile = myResources.openRawResource(R.raw.road_restaurant);
+                StringBuffer strBuffer = new StringBuffer();
+                String str = null;
+                try {
+                    in = new BufferedReader(
+                            new InputStreamReader(myFile, "UTF-8"));  // file이 utf-8 로 저장되어 있다면 "UTF-8"
+                    while( (str = in.readLine()) != null)                      // file이 KSC5601로 저장되어 있다면 "KSC5601"
+                    {
+                        strBuffer.append(str + " ");
+                    }
+                    in.close();
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            StringTokenizer st = new StringTokenizer(strBuffer.toString(), " ");
+            String [] array = new String[st.countTokens()];
+            int i = 0;
+            while(st.hasMoreElements()){
+                array[i++] = st.nextToken();
+            }
+            for(i=0; i < array.length ; i=i+3){
+                RestaurantNM.add(array[i]);
+                RestaurantXCODE.add(Double.parseDouble(array[i+1]));
+                RestaurantYCODE.add(Double.parseDouble(array[i+2]));
+            }
     }
+}

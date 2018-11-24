@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,48 +40,64 @@ public class StartActivity extends Activity {
     TextView textView;
     String key="616d44704b776b6439366e78424248";
     String data;
+    CheckBox food,road,restaurant;
 
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_start);
-            button =(Button) findViewById(R.id.button);
-            textView = (TextView) findViewById(R.id.textView);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_start);
+        button =(Button) findViewById(R.id.button);
+        textView = (TextView) findViewById(R.id.textView);
+        food = (CheckBox) findViewById(R.id.food);
+        road = (CheckBox) findViewById(R.id.road);
+        restaurant = (CheckBox) findViewById(R.id.restaurant);
+    }
+    public int Checked() {
+        int resultInt = 0;
+        if (food.isChecked()) {
+            resultInt += 1;
         }
+        if (road.isChecked()) {
+            resultInt += 10;
+        }
+        if(restaurant.isChecked()){
+            resultInt += 100;
+        }
+        return resultInt;
+    }
 
-        public void mOnClick(View v){
-            switch( v.getId() ){
-                case R.id.button:
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기
-                            data= getFoodXmlData();
-                            getRoadXmlData();
-                            getRoadRestaurantData();
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
+
+    public void mOnClick(View v){
+        switch( v.getId() ){
+            case R.id.button:
+                new Thread(new Runnable() {
+                    public void run() {  //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기//
+                        data= getFoodXmlData();
+                        getRoadXmlData();
+                        getRoadRestaurantData();
+                        runOnUiThread(new Runnable() {
+                            public void run() {
                                     // TODO Auto-generated method stub
 //                                    textView.setText(data);
-                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
-                                    intent.putExtra("NM",NM);
-                                    intent.putExtra("XCODE",  XCODE);
-                                    intent.putExtra("YCODE",YCODE);
-                                    intent.putExtra("COT_CONTS_NAME",COT_CONTS_NAME);
-                                    intent.putExtra("COT_COORD_X",COT_COORD_X);
-                                    intent.putExtra("COT_COORD_Y",COT_COORD_Y);
-                                    intent.putExtra("RestaurantNM",RestaurantNM);
-                                    intent.putExtra("RestaurantXCODE",RestaurantXCODE);
-                                    intent.putExtra("RestaurantYCODE",RestaurantYCODE);
-                                    startActivity(intent);
-                                }
-                            });
-                        }
-                    }).start();
-                    break;
-            }
+                                Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                intent.putExtra("NM",NM);
+                                intent.putExtra("XCODE",  XCODE);
+                                intent.putExtra("YCODE",YCODE);
+                                intent.putExtra("COT_CONTS_NAME",COT_CONTS_NAME);
+                                intent.putExtra("COT_COORD_X",COT_COORD_X);
+                                intent.putExtra("COT_COORD_Y",COT_COORD_Y);
+                                intent.putExtra("RestaurantNM",RestaurantNM);
+                                intent.putExtra("RestaurantXCODE",RestaurantXCODE);
+                                intent.putExtra("RestaurantYCODE",RestaurantYCODE);
+                                intent.putExtra("checked",Checked());
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                }).start();
+                break;
         }
+    }
         //서울시 푸드트럭 위치 불러오는 함수
         String getFoodXmlData() {
             StringBuffer buffer = new StringBuffer();

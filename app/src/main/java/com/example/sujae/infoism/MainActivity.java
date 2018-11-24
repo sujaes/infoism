@@ -1,6 +1,7 @@
 package com.example.sujae.infoism;
 
 import android.app.FragmentManager;
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,6 +28,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<String> RestaurantNM;
     ArrayList<Double> RestaurantXCODE;
     ArrayList<Double> RestaurantYCODE;
+    int resultInt;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -44,18 +46,40 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         RestaurantNM = (ArrayList<String>) getIntent().getSerializableExtra("RestaurantNM");
         RestaurantXCODE = (ArrayList<Double>) getIntent().getSerializableExtra("RestaurantXCODE");
         RestaurantYCODE = (ArrayList<Double>) getIntent().getSerializableExtra("RestaurantYCODE");
+        Intent it=getIntent();	//인텐트 받기 선언
+        resultInt = it.getIntExtra("checked",0);
     }
     //맵에 알맞게 마커를 설정하고 마커 클릭시 알맞은 intent로 넘어감
     @Override
     public void onMapReady(final GoogleMap map) {
-        Toast.makeText(getApplicationContext(), "NM = "+NM.size(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "resultInt = "+resultInt, Toast.LENGTH_SHORT).show();
         //푸드트럭 추가하기 좌표가 ITRF2000좌표라서 wgs84로 변경해야함
-        for (int i = 0; i < NM.size(); i++) {
-            MarkerOptions markerOptions = new MarkerOptions();
-            GeoPoint katec_pt = new GeoPoint(XCODE.get(i),YCODE.get(i));
-            GeoPoint out_pt = GeoTrans.convert(GeoTrans.TM, GeoTrans.GEO, katec_pt);
-            markerOptions.position(new LatLng(out_pt.getY(),out_pt.getX())).title(NM.get(i));
-            map.addMarker(markerOptions);
+        if(resultInt/100==1){
+            resultInt=resultInt%100;
+            //백종원의 골목식당 추가하기(RAW파일 사용했음)
+            for(int k=0;k<RestaurantNM.size();k++){
+                MarkerOptions markerOptions2 = new MarkerOptions();
+                Log.e("array",RestaurantNM.get(k)+" "+RestaurantXCODE.get(k) + " "+ RestaurantYCODE.get(k));
+                markerOptions2.position(new LatLng(RestaurantXCODE.get(k),RestaurantYCODE.get(k))).title(RestaurantNM.get(k));
+                map.addMarker(markerOptions2);
+            }
+        }
+        if(resultInt/10==1){
+            resultInt=resultInt%10;
+            //골목길 추가하기
+            for(int j = 0 ; j<COT_CONTS_NAME.size();j++){
+                MarkerOptions markerOptions1 = new MarkerOptions();
+                markerOptions1.position(new LatLng(COT_COORD_Y.get(j),COT_COORD_X.get(j))).title(COT_CONTS_NAME.get(j));
+                map.addMarker(markerOptions1);
+            }
+        }
+        if(resultInt/1==1) {
+            for (int i = 0; i < NM.size(); i++) {
+                MarkerOptions markerOptions = new MarkerOptions();
+                GeoPoint katec_pt = new GeoPoint(XCODE.get(i), YCODE.get(i));
+                GeoPoint out_pt = GeoTrans.convert(GeoTrans.TM, GeoTrans.GEO, katec_pt);
+                markerOptions.position(new LatLng(out_pt.getY(), out_pt.getX())).title(NM.get(i));
+                map.addMarker(markerOptions);
 //            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 //                public boolean onMarkerClick(Marker marker) {
 //                    if (marker.getTitle().equals("스테이킹")) {
@@ -64,19 +88,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //                    return false;
 //                }
 //            });
-        }
-        //골목길 추가하기
-        for(int j = 0 ; j<COT_CONTS_NAME.size();j++){
-            MarkerOptions markerOptions1 = new MarkerOptions();
-            markerOptions1.position(new LatLng(COT_COORD_Y.get(j),COT_COORD_X.get(j))).title(COT_CONTS_NAME.get(j));
-            map.addMarker(markerOptions1);
-        }
-        //백종원의 골목식당 추가하기(RAW파일 사용했음)
-        for(int k=0;k<RestaurantNM.size();k++){
-            MarkerOptions markerOptions2 = new MarkerOptions();
-            Log.e("array",RestaurantNM.get(k)+" "+RestaurantXCODE.get(k) + " "+ RestaurantYCODE.get(k));
-            markerOptions2.position(new LatLng(RestaurantXCODE.get(k),RestaurantYCODE.get(k))).title(RestaurantNM.get(k));
-            map.addMarker(markerOptions2);
+            }
         }
         map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(37.570983,126.976298)));
         map.animateCamera(CameraUpdateFactory.zoomTo(13));

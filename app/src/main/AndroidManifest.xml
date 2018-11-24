@@ -14,13 +14,14 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAigLGWsZyUuV4uwC9usuSqql4o-eM77l4" />
 
-        <activity android:name=".StartActivity">
+        <activity android:name=".LoadingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".StartActivity"/>
         <activity android:name=".MainActivity" />
     </application>
 

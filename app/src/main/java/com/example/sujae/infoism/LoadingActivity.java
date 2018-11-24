@@ -20,6 +20,6 @@ public class LoadingActivity extends FragmentActivity {
             public void run() {
                 startActivity(new Intent(getApplicationContext(), StartActivity.class));
             }
-        }, 2000);
+        }, 1500);
     }
 }

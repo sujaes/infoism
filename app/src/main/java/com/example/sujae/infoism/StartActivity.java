@@ -37,7 +37,6 @@ public class StartActivity extends Activity {
     ArrayList<Double> RestaurantYCODE = new ArrayList<Double>();
 
     Button button;
-    TextView textView;
     String key="616d44704b776b6439366e78424248";
     String data;
     CheckBox food,road,restaurant;
@@ -47,7 +46,6 @@ public class StartActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         button =(Button) findViewById(R.id.button);
-        textView = (TextView) findViewById(R.id.textView);
         food = (CheckBox) findViewById(R.id.food);
         road = (CheckBox) findViewById(R.id.road);
         restaurant = (CheckBox) findViewById(R.id.restaurant);
@@ -171,6 +169,7 @@ public class StartActivity extends Activity {
         //서울시 30선 골목길 불러오는 함수
         public void getRoadXmlData() {
             String temp;
+            boolean lang=true;
             String queryUrl = "http://openapi.seoul.go.kr:8088/" + key + "/xml/MgisAllyWay/1/50/";
             try {
                 URL url = new URL(queryUrl); // 문자열로 된 요청 url을 URL 객체로 생성
@@ -192,29 +191,38 @@ public class StartActivity extends Activity {
                             } else if (tag.equals("COT_COORD_X")) {
                                 xpp.next();
                                 temp = xpp.getText();
-//                                if(COT_COORD_X.contains(Double.parseDouble(temp))){
-//                                    break;
-//                                }
+                                if(COT_COORD_X.contains(Double.parseDouble(temp))){
+                                    break;
+                                }
                                 COT_COORD_X.add(Double.parseDouble(temp));
                             } else if (tag.equals("COT_COORD_Y")) {
                                 xpp.next();
                                 temp = xpp.getText();
-//                                if(COT_COORD_Y.contains(Double.parseDouble(temp))){
-//                                    break;
-//                                }
+                                if(COT_COORD_Y.contains(Double.parseDouble(temp))){
+                                    break;
+                                }
                                 COT_COORD_Y.add(Double.parseDouble(temp));
                             }
-//                            if (tag.equals("COT_CONTS_LAN_TYPE")) {
-//                                xpp.next();
-//                                temp = xpp.getText();
-//                                if(temp.equals("ENG")){
-//                                    break;
-//                                }
-//                            }
-                            else if (tag.equals("COT_CONTS_NAME")) {
+                            //30선 골목길 한글이름만 추출하기 위해서 넣은 else if문
+                            else if (tag.equals("COT_CONTS_LAN_TYPE")) {
                                 xpp.next();
                                 temp = xpp.getText();
-                                COT_CONTS_NAME.add(temp);
+                                if(temp.equals("ENG")){
+                                    lang=false;
+
+                                }else{
+                                    lang=true;
+                                }
+                                break;
+                            }
+                            else if (tag.equals("COT_CONTS_NAME")) {
+
+                                xpp.next();
+                                temp = xpp.getText();
+                                if(lang==true){
+                                    COT_CONTS_NAME.add(temp);
+                                }else{
+                                }
                             }
                             break;
                         case XmlPullParser.TEXT:

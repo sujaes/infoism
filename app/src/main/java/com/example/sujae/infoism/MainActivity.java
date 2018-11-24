@@ -1,9 +1,19 @@
 package com.example.sujae.infoism;
 
+import android.Manifest;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,11 +39,54 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     ArrayList<Double> RestaurantXCODE;
     ArrayList<Double> RestaurantYCODE;
     int resultInt;
+
+    //현재 내 위치 지도에 넣기위해 추가한 코드
+    GoogleMap googleMap;
+    MapFragment mapFragment;
+    LocationManager locationManager;
+    //위도 경도 초기화 해주기 서울시청
+    double mLatitude = 37.566886;  //위도
+    double mLongitude=126.988317; //경도
+
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        //현재 내 위치 지도에 넣기위해 추가한 코드
+        locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        //GPS가 켜져있는지 체크
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            //GPS 설정화면으로 이동
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            intent.addCategory(Intent.CATEGORY_DEFAULT);
+            startActivity(intent);
+            finish();
+        }
+        //마시멜로 이상이면 권한 요청하기
+        if(Build.VERSION.SDK_INT >= 23){
+            //권한이 없는 경우
+            if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION , Manifest.permission.ACCESS_FINE_LOCATION} , 1);
+            }
+            //권한이 있는 경우
+            else{
+                requestMyLocation();
+            }
+        }
+        //마시멜로 아래
+        else{
+            requestMyLocation();
+        }
+
+
+
+
         FragmentManager fragmentManager = getFragmentManager();
-        MapFragment mapFragment = (MapFragment) fragmentManager
+        mapFragment = (MapFragment) fragmentManager
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         //인텐트 객체로 데이터 넘겨받기
@@ -49,10 +102,74 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Intent it=getIntent();	//인텐트 받기 선언
         resultInt = it.getIntExtra("checked",0);
     }
+
+
+
+    //현재 내 위치 지도에 넣기위해 추가한 코드
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        //ACCESS_COARSE_LOCATION 권한
+        if(requestCode==1){
+            //권한받음
+            if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                requestMyLocation();
+            }
+            //권한못받음
+            else{
+                Toast.makeText(this, "권한없음", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+    public void requestMyLocation(){
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            return;
+        }
+        Location location = locationManager
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (location != null) {
+            mLatitude = location.getLatitude();
+            mLongitude = location.getLongitude();
+        }
+        //요청
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 100, 1, locationListener);
+    }
+    //위치정보 구하기 리스너
+    LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                    ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                return;
+            }
+            //나의 위치를 한번만 가져오기 위해
+            locationManager.removeUpdates(locationListener);
+            //위도 경도
+            mLatitude = location.getLatitude();   //위도
+            mLongitude = location.getLongitude(); //경도
+            //콜백클래스 설정
+//            mapFragment.getMapAsync(MainActivity.this);
+        }
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) { Log.d("gps", "onStatusChanged"); }
+        @Override
+        public void onProviderEnabled(String provider) { }
+        @Override
+        public void onProviderDisabled(String provider) { }
+    };
+
+
+
+
+
     //맵에 알맞게 마커를 설정하고 마커 클릭시 알맞은 intent로 넘어감
     @Override
-    public void onMapReady(final GoogleMap map) {
-        Toast.makeText(getApplicationContext(), "resultInt = "+resultInt, Toast.LENGTH_SHORT).show();
+    public void onMapReady(final GoogleMap googleMap) {
+        //현재 내 위치 지도에 넣기위해 추가한 코드
+        this.googleMap = googleMap;
+        this.googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
         //푸드트럭 추가하기 좌표가 ITRF2000좌표라서 wgs84로 변경해야함
         if(resultInt/100==1){
             resultInt=resultInt%100;
@@ -61,7 +178,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 MarkerOptions markerOptions2 = new MarkerOptions();
                 Log.e("array",RestaurantNM.get(k)+" "+RestaurantXCODE.get(k) + " "+ RestaurantYCODE.get(k));
                 markerOptions2.position(new LatLng(RestaurantXCODE.get(k),RestaurantYCODE.get(k))).title(RestaurantNM.get(k));
-                map.addMarker(markerOptions2);
+                googleMap.addMarker(markerOptions2);
             }
         }
         if(resultInt/10==1){
@@ -70,7 +187,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             for(int j = 0 ; j<COT_CONTS_NAME.size();j++){
                 MarkerOptions markerOptions1 = new MarkerOptions();
                 markerOptions1.position(new LatLng(COT_COORD_Y.get(j),COT_COORD_X.get(j))).title(COT_CONTS_NAME.get(j));
-                map.addMarker(markerOptions1);
+                googleMap.addMarker(markerOptions1);
+//                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+//                public boolean onMarkerClick(Marker marker) {
+//                    if (marker.getTitle().equals("남대문 칼국수골목")) {
+//                        Toast.makeText(getApplicationContext(), "남대문 칼국수골목.", Toast.LENGTH_SHORT).show();
+//                    }
+//                    return false;
+//                }
+//            });
             }
         }
         if(resultInt/1==1) {
@@ -79,7 +204,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 GeoPoint katec_pt = new GeoPoint(XCODE.get(i), YCODE.get(i));
                 GeoPoint out_pt = GeoTrans.convert(GeoTrans.TM, GeoTrans.GEO, katec_pt);
                 markerOptions.position(new LatLng(out_pt.getY(), out_pt.getX())).title(NM.get(i));
-                map.addMarker(markerOptions);
+                googleMap.addMarker(markerOptions);
 //            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 //                public boolean onMarkerClick(Marker marker) {
 //                    if (marker.getTitle().equals("스테이킹")) {
@@ -90,7 +215,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 //            });
             }
         }
-        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(37.570983,126.976298)));
-        map.animateCamera(CameraUpdateFactory.zoomTo(13));
+        //현재 내 위치 지도에 넣기위해 추가한 코드
+        LatLng position = new LatLng(mLatitude,mLongitude);
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
+
+//        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude,longitude)));
+//        map.animateCamera(CameraUpdateFactory.zoomTo(13));
     }
 }

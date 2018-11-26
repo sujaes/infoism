@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,10 +18,17 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -48,11 +57,50 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     double mLatitude = 37.566886;  //위도
     double mLongitude=126.988317; //경도
 
+    private AdView mAdView;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MobileAds.initialize(this, "ca-app-pub-8740916255036569~6025607322");
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                // Code to be executed when an ad finishes loading.
+                Log.e("광고" ,"load됨");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                // Code to be executed when an ad request fails.
+                Log.e("광고" ,"load실패");
+            }
+
+            @Override
+            public void onAdOpened() {
+                // Code to be executed when an ad opens an overlay that
+                // covers the screen.
+                Log.e("광고" ,"오픈됨");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                // Code to be executed when the user has left the app.
+                Log.e("광고" ,"어플끔");
+            }
+
+            @Override
+            public void onAdClosed() {
+                // Code to be executed when when the user is about to return
+                // to the app after tapping on an ad.
+                Log.e("광고" ,"광고닫음");
+            }
+        });
 
 
         //현재 내 위치 지도에 넣기위해 추가한 코드
@@ -177,7 +225,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             for(int k=0;k<RestaurantNM.size();k++){
                 MarkerOptions markerOptions2 = new MarkerOptions();
                 Log.e("array",RestaurantNM.get(k)+" "+RestaurantXCODE.get(k) + " "+ RestaurantYCODE.get(k));
+
                 markerOptions2.position(new LatLng(RestaurantXCODE.get(k),RestaurantYCODE.get(k))).title(RestaurantNM.get(k));
+                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.baek);
+                Bitmap b=bitmapdraw.getBitmap();
+                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
+                markerOptions2.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+
                 googleMap.addMarker(markerOptions2);
             }
         }
@@ -187,7 +241,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             for(int j = 0 ; j<COT_CONTS_NAME.size();j++){
                 MarkerOptions markerOptions1 = new MarkerOptions();
                 markerOptions1.position(new LatLng(COT_COORD_Y.get(j),COT_COORD_X.get(j))).title(COT_CONTS_NAME.get(j));
+                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.road);
+                Bitmap b=bitmapdraw.getBitmap();
+                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
+                markerOptions1.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                 googleMap.addMarker(markerOptions1);
+
 //                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 //                public boolean onMarkerClick(Marker marker) {
 //                    if (marker.getTitle().equals("남대문 칼국수골목")) {
@@ -204,7 +263,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 GeoPoint katec_pt = new GeoPoint(XCODE.get(i), YCODE.get(i));
                 GeoPoint out_pt = GeoTrans.convert(GeoTrans.TM, GeoTrans.GEO, katec_pt);
                 markerOptions.position(new LatLng(out_pt.getY(), out_pt.getX())).title(NM.get(i));
+                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.foodtruck);
+                Bitmap b=bitmapdraw.getBitmap();
+                Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
+                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                 googleMap.addMarker(markerOptions);
+
 //            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 //                public boolean onMarkerClick(Marker marker) {
 //                    if (marker.getTitle().equals("스테이킹")) {

@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -32,6 +33,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -58,8 +66,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     double mLongitude=126.988317; //경도
 
     private AdView mAdView;
-
-
+    Document doc =null;
+    Elements contents;
+    String st = "";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -208,6 +217,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     };
 
 
+//    public String parsing(final String parsename){
+//        new AsyncTask() {//AsyncTask객체 생성
+//            protected Object doInBackground(Object[] params) {
+//                try {
+//                    doc = Jsoup.connect("https://search.naver.com/search.naver?where=post&sm=tab_jum&query="+parsename).get(); //naver페이지를 불러옴
+//                    contents = doc.select("span.ah_k");//셀렉터로 span태그중 class값이 ah_k인 내용을 가져옴
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                int cnt = 0;//숫자를 세기위한 변수
+//                for(Element element: contents) {
+//                    cnt++;
+//                    st += cnt+". "+element.text() + "\n";
+//                    if(cnt == 10)//10위까지 파싱하므로
+//                        break;
+//                    }
+//                    return null;
+//                    }
+//                    protected void onPostExecute(Object o) {
+//                        super.onPostExecute(o);
+//                        Log.e("paring",st);
+//                    }
+//                }.execute();
+//        return st;
+//    }
 
 
 
@@ -233,6 +267,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 markerOptions2.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
                 googleMap.addMarker(markerOptions2);
+
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    public boolean onMarkerClick(Marker marker) {
+                        Intent intent = new Intent(getApplicationContext(),BlogActivity.class);
+                        intent.putExtra("storename",marker.getTitle());
+                        startActivity(intent);
+
+                        return false;
+                    }
+                });
             }
         }
         if(resultInt/10==1){
@@ -247,14 +291,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 markerOptions1.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                 googleMap.addMarker(markerOptions1);
 
-//                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                public boolean onMarkerClick(Marker marker) {
-//                    if (marker.getTitle().equals("남대문 칼국수골목")) {
-//                        Toast.makeText(getApplicationContext(), "남대문 칼국수골목.", Toast.LENGTH_SHORT).show();
-//                    }
-//                    return false;
-//                }
-//            });
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    public boolean onMarkerClick(Marker marker) {
+                        Intent intent = new Intent(getApplicationContext(),BlogActivity.class);
+                        intent.putExtra("storename",marker.getTitle());
+                        startActivity(intent);
+
+                        return false;
+                    }
+                });
             }
         }
         if(resultInt/1==1) {
@@ -269,14 +314,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
                 googleMap.addMarker(markerOptions);
 
-//            map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                public boolean onMarkerClick(Marker marker) {
-//                    if (marker.getTitle().equals("스테이킹")) {
-//                        Toast.makeText(getApplicationContext(), "스테이킹입니다.", Toast.LENGTH_SHORT).show();
-//                    }
-//                    return false;
-//                }
-//            });
+            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                public boolean onMarkerClick(Marker marker) {
+                    Intent intent = new Intent(getApplicationContext(),BlogActivity.class);
+                    intent.putExtra("storename",marker.getTitle());
+                    startActivity(intent);
+
+                    return false;
+                }
+            });
             }
         }
         //현재 내 위치 지도에 넣기위해 추가한 코드

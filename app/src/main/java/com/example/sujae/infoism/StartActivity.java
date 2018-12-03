@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.xmlpull.v1.XmlPullParser;
@@ -37,6 +38,7 @@ public class StartActivity extends Activity {
     ArrayList<Double> RestaurantYCODE = new ArrayList<Double>();
 
     Button button;
+
     String key="616d44704b776b6439366e78424248";
     String data;
     CheckBox food,road,restaurant;

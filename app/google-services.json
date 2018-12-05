@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "432331073655",
+    "firebase_url": "https://infoism-b20e8.firebaseio.com",
+    "project_id": "infoism-b20e8",
+    "storage_bucket": "infoism-b20e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432331073655:android:80243d685e29bd0c",
+        "android_client_info": {
+          "package_name": "com.example.sujae.infoism"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "432331073655-cupai6el0h392mvfgg556mtmo2no3pcb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.sujae.infoism",
+            "certificate_hash": "ce7926d43b30a35eb3bb6a17ac0090291a1b56d3"
+          }
+        },
+        {
+          "client_id": "432331073655-rolp1ch46arvvqr4i76gkeuj7e5fn5p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfM4xEDcfxM4AGknFNGuu78g_sqq0fDAk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432331073655-rolp1ch46arvvqr4i76gkeuj7e5fn5p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

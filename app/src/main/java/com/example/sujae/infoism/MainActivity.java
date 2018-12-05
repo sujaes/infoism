@@ -9,7 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
+
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
+
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -66,8 +66,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     double mLongitude=126.988317; //경도
 
     private AdView mAdView;
-    Document doc =null;
-    Elements contents;
+//    Document doc =null;
+//    Elements contents;
     String st = "";
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,33 +76,28 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-
         mAdView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
                 // Code to be executed when an ad finishes loading.
                 Log.e("광고" ,"load됨");
             }
-
             @Override
             public void onAdFailedToLoad(int errorCode) {
                 // Code to be executed when an ad request fails.
                 Log.e("광고" ,"load실패");
             }
-
             @Override
             public void onAdOpened() {
                 // Code to be executed when an ad opens an overlay that
                 // covers the screen.
                 Log.e("광고" ,"오픈됨");
             }
-
             @Override
             public void onAdLeftApplication() {
                 // Code to be executed when the user has left the app.
                 Log.e("광고" ,"어플끔");
             }
-
             @Override
             public void onAdClosed() {
                 // Code to be executed when when the user is about to return
@@ -110,7 +105,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 Log.e("광고" ,"광고닫음");
             }
         });
-
 
         //현재 내 위치 지도에 넣기위해 추가한 코드
         locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
@@ -252,14 +246,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         this.googleMap = googleMap;
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        //푸드트럭 추가하기 좌표가 ITRF2000좌표라서 wgs84로 변경해야함
         if(resultInt/100==1){
             resultInt=resultInt%100;
             //백종원의 골목식당 추가하기(RAW파일 사용했음)
             for(int k=0;k<RestaurantNM.size();k++){
                 MarkerOptions markerOptions2 = new MarkerOptions();
                 Log.e("array",RestaurantNM.get(k)+" "+RestaurantXCODE.get(k) + " "+ RestaurantYCODE.get(k));
-
                 markerOptions2.position(new LatLng(RestaurantXCODE.get(k),RestaurantYCODE.get(k))).title(RestaurantNM.get(k));
                 BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.baek);
                 Bitmap b=bitmapdraw.getBitmap();
@@ -302,6 +294,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 });
             }
         }
+        //푸드트럭 추가하기 좌표가 ITRF2000좌표라서 wgs84로 변경해야함
+
         if(resultInt/1==1) {
             for (int i = 0; i < NM.size(); i++) {
                 MarkerOptions markerOptions = new MarkerOptions();

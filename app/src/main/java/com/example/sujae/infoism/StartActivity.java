@@ -3,6 +3,7 @@ package com.example.sujae.infoism;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +13,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+
+import org.jsoup.select.Elements;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.BufferedReader;
@@ -19,12 +28,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Document;
+
 
 public class StartActivity extends Activity {
     ArrayList<String> NM = new ArrayList<String>();
@@ -36,12 +47,13 @@ public class StartActivity extends Activity {
     ArrayList<Double> COT_COORD_Y = new ArrayList<Double>();
     ArrayList<Double> RestaurantXCODE = new ArrayList<Double>();
     ArrayList<Double> RestaurantYCODE = new ArrayList<Double>();
-
+    private AdView mAdView;
     Button button;
 
     String key="616d44704b776b6439366e78424248";
-    String data;
     CheckBox food,road,restaurant;
+    private static String urlStr = "http://www.kma.go.kr/wid/queryDFS.jsp?gridx=61&gridy=125";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +63,77 @@ public class StartActivity extends Activity {
         food = (CheckBox) findViewById(R.id.food);
         road = (CheckBox) findViewById(R.id.road);
         restaurant = (CheckBox) findViewById(R.id.restaurant);
+
+
+        //날씨 파싱
+        TextView textView = (TextView)findViewById(R.id.textView);
+
+        WeatherConnection weatherConnection = new WeatherConnection();
+
+        AsyncTask<String, String, String> result = weatherConnection.execute("기온 : ","\n날씨 : ");
+
+        System.out.println("RESULT");
+
+        try{
+            String msg = result.get();
+            System.out.println(msg);
+
+            textView.setText(msg.toString());
+
+        }catch (Exception e){
+
+        }
+
+
+
     }
+    public class WeatherConnection extends AsyncTask<String, String, String>{
+
+        // 백그라운드에서 작업하게 한다
+        @Override
+        protected String doInBackground(String... params) {
+
+
+            // Jsoup을 이용한 날씨데이터 Pasing하기.
+            try{
+
+                String path = "http://weather.naver.com/rgn/townWetr.nhn?naverRgnCd=09650510";
+
+                org.jsoup.nodes.Document document = Jsoup.connect(path).get();
+
+                Elements elements = document.select("em");
+                Element targetElement = elements.get(2);
+                String text = targetElement.text();
+                return text;
+
+
+                /*
+                // URL접속하여 HTML 가져오기.
+                URL url = new URL("http://weather.naver.com/rgn/townWetr.nhn?naverRgnCd=09650510");
+
+                System.out.println("Call target URL try....");
+
+                InputStream inputStream = url.openStream();
+                Scanner scanner = new Scanner(inputStream, "UTF-8");
+
+                 while (true){
+                    try{
+                        System.out.println(scanner.nextLine());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+                */
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+
+
     public int Checked() {
         int resultInt = 0;
         if (food.isChecked()) {
@@ -72,7 +154,7 @@ public class StartActivity extends Activity {
             case R.id.button:
                 new Thread(new Runnable() {
                     public void run() {  //아래 메소드를 호출하여 XML data를 파싱해서 String 객체로 얻어오기//
-                        data= getFoodXmlData();
+                        getFoodXmlData();
                         getRoadXmlData();
                         getRoadRestaurantData();
                         runOnUiThread(new Runnable() {
@@ -99,75 +181,73 @@ public class StartActivity extends Activity {
         }
     }
         //서울시 푸드트럭 위치 불러오는 함수
-        String getFoodXmlData() {
-            StringBuffer buffer = new StringBuffer();
-            String temp;
-            String queryUrl = "http://openapi.seoul.go.kr:8088/" + key + "/xml/foodTruckInfo/1/50/";
-            try {
-                URL url = new URL(queryUrl); // 문자열로 된 요청 url을 URL 객체로 생성
-                InputStream is = url.openStream(); //url 위치로 인풋스트림 연결
-                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
-                XmlPullParser xpp = factory.newPullParser();
-                xpp.setInput(new InputStreamReader(is, "UTF-8"));
-                // inputstream 으로부터 xml 입력받기
-                String tag;
-                xpp.next();
-                int eventType = xpp.getEventType();
-                while (eventType != XmlPullParser.END_DOCUMENT) {
-                    switch (eventType) {
-                        case XmlPullParser.START_DOCUMENT:
-                            break;
-                        case XmlPullParser.START_TAG:
-                            tag = xpp.getName(); // 태그 이름 얻어오기
-                            if (tag.equals("foodTruckInfo")){
+        void getFoodXmlData() {
+        StringBuffer buffer = new StringBuffer();
+        String temp;
+        String queryUrl = "http://openapi.seoul.go.kr:8088/" + key + "/xml/foodTruckInfo/1/100/";
+        try {
+            URL url = new URL(queryUrl); // 문자열로 된 요청 url을 URL 객체로 생성
+            InputStream is = url.openStream(); //url 위치로 인풋스트림 연결
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            XmlPullParser xpp = factory.newPullParser();
+            xpp.setInput(new InputStreamReader(is, "UTF-8"));
+            // inputstream 으로부터 xml 입력받기
+            String tag;
+            xpp.next();
+            int eventType = xpp.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
+                switch (eventType) {
+                    case XmlPullParser.START_DOCUMENT:
+                        break;
+                    case XmlPullParser.START_TAG:
+                        tag = xpp.getName(); // 태그 이름 얻어오기
+                        if (tag.equals("foodTruckInfo")){
 
-                            }
-                            else if (tag.equals("NM")) {
-                                buffer.append("사업장명 : ");
-                                xpp.next();
-                                temp = xpp.getText();
+                        }
+                        else if (tag.equals("NM")) {
+                            buffer.append("사업장명 : ");
+                            xpp.next();
+                            temp = xpp.getText();
 
-                                buffer.append(temp);
-                                buffer.append("\n");
+                            buffer.append(temp);
+                            buffer.append("\n");
 
-                                NM.add(temp);
+                            NM.add(temp);
 
-                            } else if (tag.equals("XCODE")) {
-                                buffer.append("X좌표 : ");
-                                xpp.next();
-                                temp = xpp.getText();
+                        } else if (tag.equals("XCODE")) {
+                            buffer.append("X좌표 : ");
+                            xpp.next();
+                            temp = xpp.getText();
 
-                                buffer.append(temp);
-                                buffer.append("\n");
+                            buffer.append(temp);
+                            buffer.append("\n");
 
-                                XCODE.add(Double.parseDouble(temp));
-                            } else if (tag.equals("YCODE")) {
-                                buffer.append("Y좌표 :");
-                                xpp.next();
-                                temp = xpp.getText();
+                            XCODE.add(Double.parseDouble(temp));
+                        } else if (tag.equals("YCODE")) {
+                            buffer.append("Y좌표 :");
+                            xpp.next();
+                            temp = xpp.getText();
 
-                                buffer.append(temp);
-                                buffer.append("\n");
+                            buffer.append(temp);
+                            buffer.append("\n");
 
-                                YCODE.add(Double.parseDouble(temp));
+                            YCODE.add(Double.parseDouble(temp));
 
-                            }
-                            break;
-                        case XmlPullParser.TEXT:
-                            break;
-                        case XmlPullParser.END_TAG:
-                            tag = xpp.getName(); // 태그 이름 얻어오기
-                            break;
-                    }
-                    eventType = xpp.next();
-
+                        }
+                        break;
+                    case XmlPullParser.TEXT:
+                        break;
+                    case XmlPullParser.END_TAG:
+                        tag = xpp.getName(); // 태그 이름 얻어오기
+                        break;
                 }
-            } catch (Exception e) {
-                // TODO Auto-generated catch blocke.printStackTrace();
+                eventType = xpp.next();
+
             }
-            buffer.append("파싱 끝\n");
-            return buffer.toString();//StringBuffer 문자열 객체 반환
+        } catch (Exception e) {
+            // TODO Auto-generated catch blocke.printStackTrace();
         }
+    }
         //서울시 30선 골목길 불러오는 함수
         public void getRoadXmlData() {
             String temp;
@@ -240,6 +320,9 @@ public class StartActivity extends Activity {
                 // TODO Auto-generated catch blocke.printStackTrace();
             }
         }
+
+
+
         //백종원의 골목식당 데이터 불러오는 함수
         public void getRoadRestaurantData(){
                 BufferedReader in;

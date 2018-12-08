@@ -20,7 +20,6 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import org.jsoup.select.Elements;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 import java.io.BufferedReader;
@@ -35,7 +34,6 @@ import java.util.StringTokenizer;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Document;
-
 
 public class StartActivity extends Activity {
     ArrayList<String> NM = new ArrayList<String>();

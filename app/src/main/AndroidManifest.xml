@@ -16,7 +16,7 @@
             android:value="AIzaSyAigLGWsZyUuV4uwC9usuSqql4o-eM77l4"/>
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-8740916255036569~6025607322"/>
+            android:value="ca-app-pub-8740916255036569~3198671966"/>
         <activity android:name=".LoadingActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

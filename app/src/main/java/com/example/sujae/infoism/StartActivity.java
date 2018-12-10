@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 
 import org.jsoup.select.Elements;
@@ -51,6 +52,7 @@ public class StartActivity extends Activity {
     String key="616d44704b776b6439366e78424248";
     CheckBox food,road,restaurant;
     private static String urlStr = "http://www.kma.go.kr/wid/queryDFS.jsp?gridx=61&gridy=125";
+    private InterstitialAd interstitialAd;
 
 
     @Override
@@ -62,29 +64,48 @@ public class StartActivity extends Activity {
         road = (CheckBox) findViewById(R.id.road);
         restaurant = (CheckBox) findViewById(R.id.restaurant);
 
+        //전면광고
+        MobileAds.initialize(this, "ca-app-pub-8740916255036569~3198671966");
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        interstitialAd.loadAd(new AdRequest.Builder().build());
+
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded(){
+                displayInterstitial();
+            }
+            @Override
+            public void onAdClosed() {
+
+            }
+
+        });
+
 
         //날씨 파싱
         TextView textView = (TextView)findViewById(R.id.textView);
-
         WeatherConnection weatherConnection = new WeatherConnection();
-
         AsyncTask<String, String, String> result = weatherConnection.execute("기온 : ","\n날씨 : ");
-
         System.out.println("RESULT");
-
         try{
             String msg = result.get();
             System.out.println(msg);
 
             textView.setText(msg.toString());
-
         }catch (Exception e){
-
         }
 
 
 
     }
+    //전면광고 보여주기
+    public void displayInterstitial(){
+        if(interstitialAd.isLoaded()){
+            interstitialAd.show();
+        }
+    }
+
     public class WeatherConnection extends AsyncTask<String, String, String>{
 
         // 백그라운드에서 작업하게 한다
@@ -146,7 +167,7 @@ public class StartActivity extends Activity {
         return resultInt;
     }
 
-
+// 버튼 누르면 MainActivitiy로 넘어가는 클릭함수
     public void mOnClick(View v){
         switch( v.getId() ){
             case R.id.button:
@@ -158,7 +179,6 @@ public class StartActivity extends Activity {
                         runOnUiThread(new Runnable() {
                             public void run() {
                                     // TODO Auto-generated method stub
-//                                    textView.setText(data);
                                 Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                                 intent.putExtra("NM",NM);
                                 intent.putExtra("XCODE",  XCODE);

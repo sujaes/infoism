@@ -67,7 +67,9 @@ public class StartActivity extends Activity {
         //전면광고
         MobileAds.initialize(this, "ca-app-pub-8740916255036569~3198671966");
         interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
+        interstitialAd.setAdUnitId("ca-app-pub-8740916255036569/9338335217");
+
+//        interstitialAd.setAdUnitId("ca-app-pub-3940256099942544/1033173712");
         interstitialAd.loadAd(new AdRequest.Builder().build());
 
         interstitialAd.setAdListener(new AdListener() {

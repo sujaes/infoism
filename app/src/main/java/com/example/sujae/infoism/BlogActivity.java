@@ -7,8 +7,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import java.util.ArrayList;
-
 public class BlogActivity extends AppCompatActivity{
 
     private WebView mWebView;
@@ -28,5 +26,57 @@ public class BlogActivity extends AppCompatActivity{
         mWebSettings.setJavaScriptEnabled(true);
 
         mWebView.loadUrl("https://search.naver.com/search.naver?where=post&sm=tab_jum&query="+storename);
+    }
+
+    /**
+     * @author aquilegia
+     *
+     */
+    public static class GeoPoint {
+        double x;
+        double y;
+        double z;
+
+        /**
+         *
+         */
+        public GeoPoint() {
+            super();
+        }
+
+        /**
+         * @param x
+         * @param y
+         */
+        public GeoPoint(double x, double y) {
+            super();
+            this.x = x;
+            this.y = y;
+            this.z = 0;
+        }
+
+        /**
+         * @param x
+         * @param y
+         * @param y
+         */
+        public GeoPoint(double x, double y, double z) {
+            super();
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public double getZ() {
+            return z;
+        }
     }
 }

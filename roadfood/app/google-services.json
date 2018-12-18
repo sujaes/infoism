@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_number": "248981215511",
+    "firebase_url": "https://roadfood-288f3.firebaseio.com",
+    "project_id": "roadfood-288f3",
+    "storage_bucket": "roadfood-288f3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:248981215511:android:ecae197c3231ba81",
+        "android_client_info": {
+          "package_name": "roadfood.sujae.com.roadfood"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "248981215511-h19mhcmhgjd5q6i6vjooci06j9j7rub3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "roadfood.sujae.com.roadfood",
+            "certificate_hash": "ce7926d43b30a35eb3bb6a17ac0090291a1b56d3"
+          }
+        },
+        {
+          "client_id": "248981215511-ld4i2envsqiighk2pqgg8te45uoqhm44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbCiUGib6TdmzAZhczUzkweeybZkaUDGo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "248981215511-ld4i2envsqiighk2pqgg8te45uoqhm44.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-8740916255036569~3198671966"
+    }
+  ],
+  "configuration_version": "1"
+}

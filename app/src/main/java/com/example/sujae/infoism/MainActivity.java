@@ -34,12 +34,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.jsoup.Jsoup;
-import org.jsoup.select.Elements;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -253,7 +247,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 MarkerOptions markerOptions2 = new MarkerOptions();
                 Log.e("array",RestaurantNM.get(k)+" "+RestaurantXCODE.get(k) + " "+ RestaurantYCODE.get(k));
                 markerOptions2.position(new LatLng(RestaurantXCODE.get(k),RestaurantYCODE.get(k))).title(RestaurantNM.get(k));
-                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.baek);
+//                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.baek);
+                BitmapDrawable bitmapdraw=(BitmapDrawable)ContextCompat.getDrawable(getApplicationContext(),R.drawable.baek_p_compressor);
+
                 Bitmap b=bitmapdraw.getBitmap();
                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
                 markerOptions2.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
@@ -277,7 +273,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             for(int j = 0 ; j<COT_CONTS_NAME.size();j++){
                 MarkerOptions markerOptions1 = new MarkerOptions();
                 markerOptions1.position(new LatLng(COT_COORD_Y.get(j),COT_COORD_X.get(j))).title(COT_CONTS_NAME.get(j));
-                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.road);
+//                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.road);
+                BitmapDrawable bitmapdraw=(BitmapDrawable)ContextCompat.getDrawable(getApplicationContext(),R.drawable.road_b_compressor);
+
                 Bitmap b=bitmapdraw.getBitmap();
                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
                 markerOptions1.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
@@ -299,10 +297,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         if(resultInt/1==1) {
             for (int i = 0; i < NM.size(); i++) {
                 MarkerOptions markerOptions = new MarkerOptions();
-                GeoPoint katec_pt = new GeoPoint(XCODE.get(i), YCODE.get(i));
-                GeoPoint out_pt = GeoTrans.convert(GeoTrans.TM, GeoTrans.GEO, katec_pt);
+                BlogActivity.GeoPoint katec_pt = new BlogActivity.GeoPoint(XCODE.get(i), YCODE.get(i));
+                BlogActivity.GeoPoint out_pt = GeoTrans.convert(GeoTrans.TM, GeoTrans.GEO, katec_pt);
                 markerOptions.position(new LatLng(out_pt.getY(), out_pt.getX())).title(NM.get(i));
-                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.foodtruck);
+//                BitmapDrawable bitmapdraw=(BitmapDrawable)getResources().getDrawable(R.drawable.foodtruck_r);
+//                BitmapDrawable bitmapdraw=(BitmapDrawable) ResourcesCompat.getDrawable(getResources(),R.drawable.foodtruck,null);
+
+                BitmapDrawable bitmapdraw=(BitmapDrawable)ContextCompat.getDrawable(getApplicationContext(),R.drawable.foodtruck_r_compressor);
                 Bitmap b=bitmapdraw.getBitmap();
                 Bitmap smallMarker = Bitmap.createScaledBitmap(b, 60, 60, false);
                 markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
@@ -321,7 +322,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         }
         //현재 내 위치 지도에 넣기위해 추가한 코드
         LatLng position = new LatLng(mLatitude,mLongitude);
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 16));
 
 //        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(latitude,longitude)));
 //        map.animateCamera(CameraUpdateFactory.zoomTo(13));

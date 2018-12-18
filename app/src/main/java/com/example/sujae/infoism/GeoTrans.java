@@ -178,9 +178,9 @@ public class GeoTrans {
 		return Math.asin(value);
 	}
 	
-	public static GeoPoint convert(int srctype, int dsttype, GeoPoint in_pt) {
-		GeoPoint tmpPt = new GeoPoint();
-		GeoPoint out_pt = new GeoPoint();
+	public static BlogActivity.GeoPoint convert(int srctype, int dsttype, BlogActivity.GeoPoint in_pt) {
+		BlogActivity.GeoPoint tmpPt = new BlogActivity.GeoPoint();
+		BlogActivity.GeoPoint out_pt = new BlogActivity.GeoPoint();
 
 		if (srctype == GEO) {
 			tmpPt.x = D2R(in_pt.x);
@@ -201,7 +201,7 @@ public class GeoTrans {
 		return out_pt;
 	}
 	
-	public static void geo2tm(int dsttype, GeoPoint in_pt, GeoPoint out_pt) {
+	public static void geo2tm(int dsttype, BlogActivity.GeoPoint in_pt, BlogActivity.GeoPoint out_pt) {
 		double x, y;
 		
 		transform(GEO, dsttype, in_pt);
@@ -241,8 +241,8 @@ public class GeoTrans {
 	}
 
 
-	public static void tm2geo(int srctype, GeoPoint in_pt, GeoPoint out_pt) {
-		GeoPoint tmpPt = new GeoPoint(in_pt.getX(), in_pt.getY());
+	public static void tm2geo(int srctype, BlogActivity.GeoPoint in_pt, BlogActivity.GeoPoint out_pt) {
+		BlogActivity.GeoPoint tmpPt = new BlogActivity.GeoPoint(in_pt.getX(), in_pt.getY());
 		int max_iter = 6;
 
 		if (m_Ind[srctype] != 0) {
@@ -307,7 +307,7 @@ public class GeoTrans {
 		transform(srctype, GEO, out_pt);
 	}
 
-	public static double getDistancebyGeo(GeoPoint pt1, GeoPoint pt2) {
+	public static double getDistancebyGeo(BlogActivity.GeoPoint pt1, BlogActivity.GeoPoint pt2) {
 		double lat1 = D2R(pt1.y);
 		double lon1 = D2R(pt1.x);
 		double lat2 = D2R(pt2.y);
@@ -320,28 +320,28 @@ public class GeoTrans {
 		return 6376.5 * 2.0 * Math.atan2(Math.sqrt(a), Math.sqrt(1.0 - a));
 	}
 
-	public static double getDistancebyKatec(GeoPoint pt1, GeoPoint pt2) {
+	public static double getDistancebyKatec(BlogActivity.GeoPoint pt1, BlogActivity.GeoPoint pt2) {
 		pt1 = convert(KATEC, GEO, pt1);
 		pt2 = convert(KATEC, GEO, pt2);
 
 		return getDistancebyGeo(pt1, pt2);
 	}
 	
-	public static double getDistancebyTm(GeoPoint pt1, GeoPoint pt2) {
+	public static double getDistancebyTm(BlogActivity.GeoPoint pt1, BlogActivity.GeoPoint pt2) {
 		pt1 = convert(TM, GEO, pt1);
 		pt2 = convert(TM, GEO, pt2);
 
 		return getDistancebyGeo(pt1, pt2);
 	}
 	
-	public static double getDistancebyUTMK(GeoPoint pt1, GeoPoint pt2) {
+	public static double getDistancebyUTMK(BlogActivity.GeoPoint pt1, BlogActivity.GeoPoint pt2) {
 		pt1 = convert(UTMK, GEO, pt1);
 		pt2 = convert(UTMK, GEO, pt2);
 
 		return getDistancebyGeo(pt1, pt2);
 	}
 	
-	public static double getDistancebyGrs80(GeoPoint pt1, GeoPoint pt2) {
+	public static double getDistancebyGrs80(BlogActivity.GeoPoint pt1, BlogActivity.GeoPoint pt2) {
 		pt1 = convert(GRS80, GEO, pt1);
 		pt2 = convert(GRS80, GEO, pt2);
 
@@ -373,7 +373,7 @@ public class GeoTrans {
 	private static final double AD_C      = 1.0026000 ;
 	/* Toms region 1 constant */
 	
-	private static void transform(int srctype, int dsttype, GeoPoint point) {
+	private static void transform(int srctype, int dsttype, BlogActivity.GeoPoint point) {
 		if (srctype == dsttype)
 			return;
 		
@@ -395,7 +395,7 @@ public class GeoTrans {
 		}
 	}
 
-	private static boolean geodetic_to_geocentric (int type, GeoPoint p) {
+	private static boolean geodetic_to_geocentric (int type, BlogActivity.GeoPoint p) {
 
 	/*
 	 * The function Convert_Geodetic_To_Geocentric converts geodetic coordinates
@@ -458,7 +458,7 @@ public class GeoTrans {
 	 * The method used here is derived from 'An Improved Algorithm for
 	 * Geocentric to Geodetic Coordinate Conversion', by Ralph Toms, Feb 1996
 	 */
-	private static void geocentric_to_geodetic (int type, GeoPoint p) {
+	private static void geocentric_to_geodetic (int type, BlogActivity.GeoPoint p) {
 
 	  double X = p.x;
 	  double Y = p.y;
@@ -547,7 +547,7 @@ public class GeoTrans {
 	// geocentic_to_wgs84(defn, p )
    //  defn = coordinate system definition,
 	//  p = point to transform in geocentric coordinates (x,y,z)
-	private static void geocentric_to_wgs84(GeoPoint p) {
+	private static void geocentric_to_wgs84(BlogActivity.GeoPoint p) {
 
 	  //if( defn.datum_type == PJD_3PARAM )
 	  {
@@ -563,7 +563,7 @@ public class GeoTrans {
 	// geocentic_from_wgs84()
 	//  coordinate system definition,
 	//  point to transform in geocentric coordinates (x,y,z)
-	private static void geocentric_from_wgs84(GeoPoint p) {
+	private static void geocentric_from_wgs84(BlogActivity.GeoPoint p) {
 
 	  //if( defn.datum_type == PJD_3PARAM ) 
 	  {
